@@ -19,7 +19,6 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::prefix('management')->group(function () {
 
         Route::get('/students', [StudentController::class, 'index']);

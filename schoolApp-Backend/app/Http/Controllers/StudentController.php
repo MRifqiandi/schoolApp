@@ -12,10 +12,20 @@ class StudentController extends Controller
 {
     public function index()
     {
-        Student::with('classroom', 'teacher')
-            ->select('id', 'name', 'nisn', 'classroom_id', 'teacher_id')
-            ->get();
+        try {
+            // Ambil siswa beserta nama kelas
+            $students = Student::with('classroom')->get();
+
+            return response()->json($students);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Internal Server Error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
 
     public function store(Request $request)
     {
