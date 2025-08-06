@@ -24,7 +24,7 @@ const ModalEditStudent = ({
         name: initialData.name || "",
         nisn: initialData.nisn || "",
         email: initialData.email || "",
-        password: "", // password kosong saat edit
+        password: "",
         classroom_id: initialData.classroom_id || "",
       });
     }

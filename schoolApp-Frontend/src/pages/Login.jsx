@@ -23,7 +23,7 @@ export default function Login() {
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", user.role);
-      localStorage.setItem("user", JSON.stringify(user)); // ✅ simpan data user
+      localStorage.setItem("user", JSON.stringify(user));
 
       if (user.role === "admin") {
         navigate("/dashboard/admin");

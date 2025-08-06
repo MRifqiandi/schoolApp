@@ -1,4 +1,3 @@
-// src/components/students/StudentEdit.jsx
 import React, { useEffect, useState } from "react";
 import { getStudent, updateStudent } from "../../api/studentApi";
 import axios from "axios";

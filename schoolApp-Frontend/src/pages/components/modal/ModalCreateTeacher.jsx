@@ -34,8 +34,8 @@ const ModalCreateTeacher = ({ isOpen, onClose, onSuccess }) => {
     e.preventDefault();
     try {
       await axios.post("/api/management/teachers", formData);
-      onSuccess(); // panggil fungsi di parent untuk refresh list
-      onClose(); // tutup modal
+      onSuccess();
+      onClose();
     } catch (err) {
       console.error("Gagal tambah guru", err);
     }

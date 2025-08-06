@@ -41,8 +41,8 @@ const ModalEditTeacher = ({ isOpen, onClose, teacher, onSuccess }) => {
         }
       );
       toast.success("Guru berhasil diperbarui", { id: loading });
-      onSuccess(); // Refresh data
-      onClose(); // Tutup modal
+      onSuccess();
+      onClose();
     } catch (err) {
       console.error(err);
       toast.error("Gagal memperbarui data guru", { id: loading });

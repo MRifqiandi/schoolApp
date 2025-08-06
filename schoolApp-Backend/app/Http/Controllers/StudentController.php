@@ -12,7 +12,7 @@ class StudentController extends Controller
 {
     public function index()
     {
-        Student::with('classroom', 'teacher') // pastikan relasi sudah dimuat
+        Student::with('classroom', 'teacher')
             ->select('id', 'name', 'nisn', 'classroom_id', 'teacher_id')
             ->get();
     }
@@ -27,21 +27,19 @@ class StudentController extends Controller
             'classroom_id' => 'required|exists:classrooms,id',
         ]);
 
-        // Buat user baru untuk login
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'student', // gunakan enum jika sudah dibuat
+            'role' => 'student',
         ]);
 
-        // Simpan siswa dan relasikan jika perlu
         $student = Student::create([
             'name' => $validated['name'],
             'nisn' => $validated['nisn'],
             'email' => $validated['email'],
             'classroom_id' => $validated['classroom_id'],
-            'user_id' => $user->id, // pastikan field ini ada di tabel students
+            'user_id' => $user->id,
         ]);
 
         return response()->json([
@@ -76,7 +74,6 @@ class StudentController extends Controller
 
         $student->update($validated);
 
-        // Optional: Update user terkait juga
         if ($student->user_id) {
             $user = User::find($student->user_id);
             if ($user) {
@@ -96,8 +93,6 @@ class StudentController extends Controller
         if (!$student) {
             return response()->json(['message' => 'Siswa tidak ditemukan'], 404);
         }
-
-        // Hapus user terkait jika ada
         if ($student->user_id) {
             User::where('id', $student->user_id)->delete();
         }
