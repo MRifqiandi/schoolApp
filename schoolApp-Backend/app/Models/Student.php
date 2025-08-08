@@ -15,6 +15,7 @@ class Student extends Model
         'nisn',
         'email',
         'classroom_id',
+        'user_id',
     ];
 
     protected $hidden = ['password'];
@@ -22,5 +23,9 @@ class Student extends Model
     public function classroom()
     {
         return $this->belongsTo(Classroom::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);  // relasi ke User
     }
 }

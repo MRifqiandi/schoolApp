@@ -9,6 +9,9 @@ import ClassroomList from "./pages/admin/ClassroomList";
 import TeacherList from "./pages/admin/TeacherList";
 import ProtectedRoute from "./pages/components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
+import ListStudentClass from "./pages/admin/ListStudentClass";
+import ListTeacherClass from "./pages/admin/ListTeacherClass";
+import ListStudentTeacherClass from "./pages/admin/ListStudentTeacherClass";
 
 export default function App() {
   return (
@@ -71,6 +74,30 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ClassroomList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/studentclass"
+          element={
+            <ProtectedRoute>
+              <ListStudentClass />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teacherclass"
+          element={
+            <ProtectedRoute>
+              <ListTeacherClass />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/classlist"
+          element={
+            <ProtectedRoute>
+              <ListStudentTeacherClass />
             </ProtectedRoute>
           }
         />

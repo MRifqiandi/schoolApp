@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Teacher;
+use App\Models\User;
 use App\Models\Classroom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 
 class TeacherController extends Controller
 {
@@ -22,16 +25,35 @@ class TeacherController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'name' => 'required',
             'nip' => 'required|unique:teachers',
-            'email' => 'nullable|email',
+            'email' => 'required|email|unique:teachers|unique:users,email',
+            'password' => 'required|min:6',
             'subject' => 'required',
-            'classroom_id' => 'nullable',
+            'classroom_id' => 'nullable|exists:classrooms,id',
         ]);
 
-        $teacher = Teacher::create($data);
-        return response()->json(['message' => 'Teacher created successfully', 'teacher' => $teacher], 201);
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'teacher',
+        ]);
+
+        $teacher = Teacher::create([
+            'name' => $validated['name'],
+            'nip' => $validated['nip'],
+            'email' => $validated['email'],
+            'subject' => $validated['subject'],
+            'classroom_id' => $validated['classroom_id'] ?? null,
+            'user_id' => $user->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Teacher created successfully',
+            'teacher' => $teacher
+        ], 201);
     }
 
     public function edit(Teacher $teacher)
@@ -48,14 +70,40 @@ class TeacherController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'nip' => 'required|unique:teachers,nip,' . $teacher->id,
-            'email' => 'nullable|email',
+            'email' => 'nullable|email|unique:users,email,' . $teacher->user_id,
+            'password' => 'nullable|min:6',
             'subject' => 'required',
-            'classroom_id' => 'nullable',
+            'classroom_id' => 'nullable|exists:classrooms,id',
         ]);
 
-        $teacher->update($data);
+
+        if (!empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $teacher->update([
+            'name' => $data['name'],
+            'nip' => $data['nip'],
+            'subject' => $data['subject'],
+            'classroom_id' => $data['classroom_id'] ?? null,
+        ]);
+
+        if ($teacher->user_id) {
+            $userData = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+            ];
+            if (isset($data['password'])) {
+                $userData['password'] = $data['password'];
+            }
+            User::where('id', $teacher->user_id)->update($userData);
+        }
+
         return response()->json(['message' => 'Teacher updated successfully', 'teacher' => $teacher]);
     }
+
 
     public function destroy(Teacher $teacher)
     {

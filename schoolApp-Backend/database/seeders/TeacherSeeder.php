@@ -18,7 +18,6 @@ class TeacherSeeder extends Seeder
             $name = $faker->name();
             $email = "teacher$i@example.com";
 
-            // Buat user dulu
             $user = User::create([
                 'name' => $name,
                 'email' => $email,
@@ -26,13 +25,13 @@ class TeacherSeeder extends Seeder
                 'role' => 'teacher',
             ]);
 
-            // Buat teacher
             Teacher::create([
                 'name' => $name,
                 'nip' => 'TCH' . str_pad($i, 4, '0', STR_PAD_LEFT),
                 'email' => $email,
                 'subject' => $faker->randomElement(['Matematika', 'Bahasa Indonesia', 'IPA', 'IPS', 'Bahasa Inggris']),
-                'classroom_id' => rand(1, 3), // pastikan classroom 1-3 ada
+                'classroom_id' => rand(1, 3),
+                'user_id' => $user->id,
             ]);
         }
     }

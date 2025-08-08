@@ -227,6 +227,7 @@ const TeacherList = () => {
             onClose={() => setIsEditModalOpen(false)}
             teacher={selectedTeacher}
             onSuccess={fetchTeachers}
+            classrooms={classrooms}
           />
         </main>
       </div>

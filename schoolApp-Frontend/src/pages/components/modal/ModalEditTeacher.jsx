@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const ModalEditTeacher = ({ isOpen, onClose, teacher, onSuccess }) => {
+const ModalEditTeacher = ({
+  isOpen,
+  onClose,
+  teacher,
+  onSuccess,
+  classrooms = [],
+}) => {
   const [form, setForm] = useState({
     name: "",
     nip: "",
     email: "",
+    password: "",
     subject: "",
     classroom_id: "",
   });
@@ -17,6 +24,7 @@ const ModalEditTeacher = ({ isOpen, onClose, teacher, onSuccess }) => {
         name: teacher.name || "",
         nip: teacher.nip || "",
         email: teacher.email || "",
+        password: "",
         subject: teacher.subject || "",
         classroom_id: teacher.classroom_id || "",
       });
@@ -24,7 +32,7 @@ const ModalEditTeacher = ({ isOpen, onClose, teacher, onSuccess }) => {
   }, [teacher]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleUpdate = async (e) => {
@@ -55,7 +63,7 @@ const ModalEditTeacher = ({ isOpen, onClose, teacher, onSuccess }) => {
     <dialog className="modal modal-open">
       <div className="modal-box bg-base-100">
         <h3 className="font-bold text-lg mb-4">Edit Data Guru</h3>
-        <form onSubmit={handleUpdate} className="space-y-3">
+        <form onSubmit={handleUpdate} className="space-y-4">
           <input
             type="text"
             name="name"
@@ -84,26 +92,39 @@ const ModalEditTeacher = ({ isOpen, onClose, teacher, onSuccess }) => {
             required
           />
           <input
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="(Kosongkan jika tidak diubah)"
+            className="input input-bordered w-full"
+          />
+          <input
             type="text"
             name="subject"
             value={form.subject}
             onChange={handleChange}
-            placeholder="Mapel"
+            placeholder="Mata Pelajaran"
             className="input input-bordered w-full"
             required
           />
-          <input
-            type="text"
+          <select
             name="classroom_id"
             value={form.classroom_id}
             onChange={handleChange}
-            placeholder="ID Kelas (sementara)"
-            className="input input-bordered w-full"
-          />
+            className="select select-bordered w-full"
+          >
+            <option value="">Pilih Kelas (Opsional)</option>
+            {classrooms.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
 
           <div className="modal-action">
             <button type="submit" className="btn btn-primary">
-              Simpan
+              Simpan Perubahan
             </button>
             <button type="button" className="btn" onClick={onClose}>
               Batal

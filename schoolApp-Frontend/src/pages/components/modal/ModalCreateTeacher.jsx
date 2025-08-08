@@ -7,14 +7,27 @@ const ModalCreateTeacher = ({ isOpen, onClose, onSuccess }) => {
     name: "",
     nip: "",
     email: "",
+    password: "",
     subject: "",
     classroom_id: "",
   });
 
   const fetchClassrooms = async () => {
     try {
-      const res = await axios.get("/api/management/teachers/create");
-      setClassrooms(res.data);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token tidak ditemukan. User harus login.");
+        return;
+      }
+      const res = await axios.get(
+        "http://localhost:8000/api/management/classrooms",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      );
+      const data = res.data.classrooms || res.data || [];
+      setClassrooms(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Gagal fetch classrooms", err);
     }
@@ -27,24 +40,47 @@ const ModalCreateTeacher = ({ isOpen, onClose, onSuccess }) => {
   }, [isOpen]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.email) {
+      alert("Email wajib diisi.");
+      return;
+    }
+    if (!formData.password) {
+      alert("Password wajib diisi.");
+      return;
+    }
+
     try {
-      await axios.post("/api/management/teachers", formData);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token tidak ditemukan. User harus login.");
+        return;
+      }
+      await axios.post(
+        "http://localhost:8000/api/management/teachers",
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      );
       onSuccess();
       onClose();
     } catch (err) {
       console.error("Gagal tambah guru", err);
+      alert("Gagal tambah guru. Cek console untuk detail error.");
     }
   };
 
   return (
     <>
       {isOpen && (
-        <dialog id="addTeacherModal" className="modal modal-open">
+        <div id="addTeacherModal" className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg mb-4">Tambah Guru</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -73,6 +109,16 @@ const ModalCreateTeacher = ({ isOpen, onClose, onSuccess }) => {
                 value={formData.email}
                 onChange={handleChange}
                 className="input input-bordered w-full"
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="input input-bordered w-full"
+                required
               />
               <input
                 type="text"
@@ -106,7 +152,7 @@ const ModalCreateTeacher = ({ isOpen, onClose, onSuccess }) => {
               </div>
             </form>
           </div>
-        </dialog>
+        </div>
       )}
     </>
   );

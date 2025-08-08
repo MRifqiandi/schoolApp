@@ -75,27 +75,42 @@ class StudentController extends Controller
             return response()->json(['message' => 'Siswa tidak ditemukan'], 404);
         }
 
-        $validated = $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'nisn' => 'required|unique:students,nisn,' . $student->id,
-            'email' => 'required|email|unique:students,email,' . $student->id,
+            'email' => 'nullable|email|unique:users,email,' . $student->user_id,
+            'password' => 'nullable|min:6',
             'classroom_id' => 'required|exists:classrooms,id',
         ]);
 
-        $student->update($validated);
+        if (!empty($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+
+        $student->update([
+            'name' => $data['name'],
+            'nisn' => $data['nisn'],
+            'classroom_id' => $data['classroom_id'],
+        ]);
+
 
         if ($student->user_id) {
-            $user = User::find($student->user_id);
-            if ($user) {
-                $user->update([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                ]);
+            $userData = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+            ];
+            if (isset($data['password'])) {
+                $userData['password'] = $data['password'];
             }
+            User::where('id', $student->user_id)->update($userData);
         }
 
         return response()->json(['message' => 'Siswa berhasil diperbarui', 'student' => $student]);
     }
+
 
     public function destroy($id)
     {

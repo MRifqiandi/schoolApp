@@ -13,7 +13,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin
         User::create([
             'name' => 'Admin Satu',
             'email' => 'admin@example.com',
@@ -21,7 +20,6 @@ class UserSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Teacher
         User::create([
             'name' => 'Guru Pertama',
             'email' => 'teacher@example.com',
@@ -29,7 +27,6 @@ class UserSeeder extends Seeder
             'role' => 'teacher',
         ]);
 
-        // Student
         User::create([
             'name' => 'Siswa Satu',
             'email' => 'student@example.com',
