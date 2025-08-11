@@ -64,6 +64,19 @@ class ClassroomController extends Controller
     public function overview()
     {
         $classrooms = Classroom::with('students', 'teachers')->get();
-        return response()->json($classrooms);
+
+        $overview = $classrooms->map(function ($classroom) {
+            return [
+                'id' => $classroom->id,
+                'name' => $classroom->name,
+                'teacher_name' => $classroom->teachers->first()->name ?? '-',
+                'subject' => $classroom->teachers->first()->subject ?? '-',
+                'total_students' => $classroom->students->count(),
+                'student_names' => $classroom->students->pluck('name')->toArray(),
+            ];
+        });
+
+        return response()->json($overview);
     }
+
 }

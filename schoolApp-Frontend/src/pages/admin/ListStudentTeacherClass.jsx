@@ -4,53 +4,23 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 const ListStudentTeacherClass = () => {
-  const [students, setStudents] = useState([]);
-  const [teachers, setTeachers] = useState([]);
-  const [classrooms, setClassrooms] = useState([]);
-
-  const [loadingStudents, setLoadingStudents] = useState(true);
-  const [loadingTeachers, setLoadingTeachers] = useState(true);
-  const [loadingClassrooms, setLoadingClassrooms] = useState(true);
-
-  const [errorStudents, setErrorStudents] = useState(null);
-  const [errorTeachers, setErrorTeachers] = useState(null);
-  const [errorClassrooms, setErrorClassrooms] = useState(null);
+  const [overview, setOverview] = useState([]);
+  const [loadingOverview, setLoadingOverview] = useState(true);
+  const [errorOverview, setErrorOverview] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     axios
-      .get("http://localhost:8000/api/management/students", {
+      .get("http://localhost:8000/api/management/classroom-overview", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        setStudents(res.data);
-        setErrorStudents(null);
+        setOverview(res.data);
+        setErrorOverview(null);
       })
-      .catch(() => setErrorStudents("Gagal memuat data siswa."))
-      .finally(() => setLoadingStudents(false));
-
-    axios
-      .get("http://localhost:8000/api/management/teachers", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setTeachers(res.data);
-        setErrorTeachers(null);
-      })
-      .catch(() => setErrorTeachers("Gagal memuat data guru."))
-      .finally(() => setLoadingTeachers(false));
-
-    axios
-      .get("http://localhost:8000/api/management/classrooms", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setClassrooms(res.data);
-        setErrorClassrooms(null);
-      })
-      .catch(() => setErrorClassrooms("Gagal memuat data kelas."))
-      .finally(() => setLoadingClassrooms(false));
+      .catch(() => setErrorOverview("Gagal memuat data gabungan."))
+      .finally(() => setLoadingOverview(false));
   }, []);
 
   return (
@@ -64,145 +34,52 @@ const ListStudentTeacherClass = () => {
           <Navbar />
         </header>
 
-        <main className="pt-24 px-8 space-y-16">
-          <section>
-            <h2 className="text-3xl font-bold text-base-content mb-4">
-              List Siswa
-            </h2>
-            {loadingStudents && <p>Loading siswa...</p>}
-            {errorStudents && <p className="text-red-600">{errorStudents}</p>}
-            {!loadingStudents && !errorStudents && (
-              <div className="bg-base-100 rounded-xl p-4 shadow-xl overflow-x-auto">
-                <table className="table table-zebra w-full text-base-content">
-                  <thead className="bg-base-300">
-                    <tr>
-                      <th>#</th>
-                      <th>Nama Siswa</th>
-                      <th>NISN</th>
-                      <th>Email</th>
-                      <th>Nama Kelas</th>
-                      <th>Kode Kelas</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {students.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={6}
-                          className="text-center text-gray-400 py-6"
-                        >
-                          Tidak ada data siswa.
-                        </td>
-                      </tr>
-                    ) : (
-                      students.map((student, i) => (
-                        <tr key={student.id}>
-                          <td>{i + 1}</td>
-                          <td>{student.name}</td>
-                          <td>{student.nisn}</td>
-                          <td>{student.email}</td>
-                          <td>{student.classroom?.name || "-"}</td>
-                          <td>{student.classroom?.class_code || "-"}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
+        <main className="pt-24 px-8">
+          <h2 className="text-3xl font-bold text-base-content mb-4">
+            Data Gabungan Siswa - Guru - Kelas
+          </h2>
 
-          <section>
-            <h2 className="text-3xl font-bold text-base-content mb-4">
-              List Guru
-            </h2>
-            {loadingTeachers && <p>Loading guru...</p>}
-            {errorTeachers && <p className="text-red-600">{errorTeachers}</p>}
-            {!loadingTeachers && !errorTeachers && (
-              <div className="bg-base-100 rounded-xl p-4 shadow-xl overflow-x-auto">
-                <table className="table table-zebra w-full text-base-content">
-                  <thead className="bg-base-300">
+          {loadingOverview && <p>Loading data...</p>}
+          {errorOverview && <p className="text-red-600">{errorOverview}</p>}
+          {!loadingOverview && !errorOverview && (
+            <div className="bg-base-100 rounded-xl p-4 shadow-xl overflow-x-auto">
+              <table className="table table-zebra w-full text-base-content">
+                <thead className="bg-base-300">
+                  <tr>
+                    <th>#</th>
+                    <th>Nama Kelas</th>
+                    <th>Nama Guru</th>
+                    <th>Mapel</th>
+                    <th>Jumlah Siswa</th>
+                    <th>Nama Siswa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {overview.length === 0 ? (
                     <tr>
-                      <th>#</th>
-                      <th>Nama Guru</th>
-                      <th>NIP</th>
-                      <th>Email</th>
-                      <th>Mapel</th>
-                      <th>Nama Kelas</th>
-                      <th>Kode Kelas</th>
+                      <td
+                        colSpan={6}
+                        className="text-center text-gray-400 py-6"
+                      >
+                        Tidak ada data.
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {teachers.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={7}
-                          className="text-center text-gray-400 py-6"
-                        >
-                          Tidak ada data guru.
-                        </td>
+                  ) : (
+                    overview.map((item, i) => (
+                      <tr key={item.id}>
+                        <td>{i + 1}</td>
+                        <td>{item.name}</td>
+                        <td>{item.teacher_name || "-"}</td>
+                        <td>{item.subject || "-"}</td>
+                        <td>{item.total_students}</td>
+                        <td>{item.student_names?.join(", ") || "-"}</td>
                       </tr>
-                    ) : (
-                      teachers.map((teacher, i) => (
-                        <tr key={teacher.id}>
-                          <td>{i + 1}</td>
-                          <td>{teacher.name}</td>
-                          <td>{teacher.nip}</td>
-                          <td>{teacher.email}</td>
-                          <td>{teacher.subject}</td>
-                          <td>{teacher.classroom?.name || "-"}</td>
-                          <td>{teacher.classroom?.class_code || "-"}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-
-          <section>
-            <h2 className="text-3xl font-bold text-base-content mb-4">
-              List Kelas
-            </h2>
-            {loadingClassrooms && <p>Loading kelas...</p>}
-            {errorClassrooms && (
-              <p className="text-red-600">{errorClassrooms}</p>
-            )}
-            {!loadingClassrooms && !errorClassrooms && (
-              <div className="bg-base-100 rounded-xl p-4 shadow-xl overflow-x-auto">
-                <table className="table table-zebra w-full text-base-content">
-                  <thead className="bg-base-300">
-                    <tr>
-                      <th>#</th>
-                      <th>Nama Kelas</th>
-                      <th>Kode Kelas</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {classrooms.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={3}
-                          className="text-center text-gray-400 py-6"
-                        >
-                          Tidak ada data kelas.
-                        </td>
-                      </tr>
-                    ) : (
-                      classrooms.map((classroom, i) => (
-                        <tr key={classroom.id}>
-                          <td>{i + 1}</td>
-                          <td>{classroom.name}</td>
-                          <td>{classroom.class_code}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </main>
       </div>
     </div>

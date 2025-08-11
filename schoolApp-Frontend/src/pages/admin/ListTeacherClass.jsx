@@ -61,7 +61,6 @@ const ListTeacherClass = () => {
                     <th>Email</th>
                     <th>Mapel</th>
                     <th>Kelas</th>
-                    <th>Kode Kelas</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,7 +82,6 @@ const ListTeacherClass = () => {
                         <td>{teacher.email}</td>
                         <td>{teacher.subject}</td>
                         <td>{teacher.classroom?.name || "-"}</td>
-                        <td>{teacher.classroom?.class_code || "-"}</td>
                       </tr>
                     ))
                   )}

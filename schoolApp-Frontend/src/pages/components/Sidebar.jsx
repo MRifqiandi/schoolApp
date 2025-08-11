@@ -14,7 +14,7 @@ const Sidebar = () => {
         <SidebarLink to="/classrooms" label="Kelola Kelas" />
         <SidebarLink to="/studentclass" label="List Siswa" />
         <SidebarLink to="/teacherclass" label="List Guru" />
-        <SidebarLink to="/classlist" label="List Kelas" />
+        <SidebarLink to="/classlist" label="List Gabungan" />
       </nav>
     </div>
   );

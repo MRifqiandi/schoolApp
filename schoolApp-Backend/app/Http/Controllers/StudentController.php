@@ -90,6 +90,7 @@ class StudentController extends Controller
         }
 
 
+        
         $student->update([
             'name' => $data['name'],
             'nisn' => $data['nisn'],

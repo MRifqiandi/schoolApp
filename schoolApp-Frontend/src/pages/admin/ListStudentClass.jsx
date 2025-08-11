@@ -60,7 +60,6 @@ const ListStudentClass = () => {
                     <th>NISN</th>
                     <th>Email</th>
                     <th>Nama Kelas</th>
-                    <th>Kode Kelas</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -81,7 +80,6 @@ const ListStudentClass = () => {
                         <td>{student.nisn}</td>
                         <td>{student.email}</td>
                         <td>{student.classroom?.name || "-"}</td>
-                        <td>{student.classroom?.class_code || "-"}</td>
                       </tr>
                     ))
                   )}
