@@ -106,7 +106,6 @@ const ClassroomList = () => {
                 <tr className="bg-base-300">
                   <th>#</th>
                   <th>Nama Kelas</th>
-                  <th>Kode Kelas</th>
                   <th className="text-center">Aksi</th>
                 </tr>
               </thead>
@@ -116,7 +115,6 @@ const ClassroomList = () => {
                     <tr key={classroom.id}>
                       <td>{index + 1}</td>
                       <td className="font-medium">{classroom.name}</td>
-                      <td>{classroom.class_code}</td>
                       <td className="text-center">
                         <div className="flex justify-center gap-2">
                           <button

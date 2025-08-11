@@ -61,22 +61,65 @@ class ClassroomController extends Controller
         return response()->json($classroom);
     }
 
-    public function overview()
+    public function listStudentsByClassroom()
     {
-        $classrooms = Classroom::with('students', 'teachers')->get();
+
+        $classrooms = Classroom::with('students')->get();
+
+        $result = $classrooms->map(function ($classroom) {
+            return [
+                'class_id' => $classroom->id,
+                'class_name' => $classroom->name,
+                'students' => $classroom->students->map(function ($student) {
+                    return [
+                        'id' => $student->id,
+                        'name' => $student->name,
+                        'nisn' => $student->nisn,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json($result);
+    }
+
+    public function listTeachersByClassroom()
+    {
+        $classrooms = Classroom::with('teachers')->get();
+
+        $result = $classrooms->map(function ($classroom) {
+            return [
+                'class_id' => $classroom->id,
+                'class_name' => $classroom->name,
+                'teachers' => $classroom->teachers->map(function ($teacher) {
+                    return [
+                        'id' => $teacher->id,
+                        'name' => $teacher->name,
+                        'subject' => $teacher->subject,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json($result);
+    }
+
+
+    public function combinedOverview()
+    {
+        $classrooms = Classroom::with(['students', 'teachers'])->get();
 
         $overview = $classrooms->map(function ($classroom) {
             return [
-                'id' => $classroom->id,
-                'name' => $classroom->name,
-                'teacher_name' => $classroom->teachers->first()->name ?? '-',
-                'subject' => $classroom->teachers->first()->subject ?? '-',
-                'total_students' => $classroom->students->count(),
-                'student_names' => $classroom->students->pluck('name')->toArray(),
+                'class_id' => $classroom->id,
+                'class_name' => $classroom->name,
+                'teachers' => $classroom->teachers->map(fn($teacher) => ['id' => $teacher->id, 'name' => $teacher->name, 'subject' => $teacher->subject]),
+                'students' => $classroom->students->map(fn($student) => ['id' => $student->id, 'name' => $student->name, 'nisn' => $student->nisn]),
             ];
         });
 
         return response()->json($overview);
     }
+
 
 }

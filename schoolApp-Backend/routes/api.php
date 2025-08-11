@@ -24,6 +24,12 @@ Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('management')->group(function () {
 
+
+        Route::get('/classrooms/students', [ClassroomController::class, 'listStudentsByClassroom']);
+        Route::get('/classrooms/teachers', [ClassroomController::class, 'listTeachersByClassroom']);
+        Route::get('/classrooms/overview', [ClassroomController::class, 'combinedOverview']);
+
+
         Route::get('/students', [StudentController::class, 'index']);
         Route::post('/students', [StudentController::class, 'store']);
         Route::get('/students/{id}', [StudentController::class, 'show']);
@@ -44,7 +50,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/classrooms/{id}', [ClassroomController::class, 'show']);
         Route::put('/classrooms/{classroom}', [ClassroomController::class, 'update']);
         Route::delete('/classrooms/{classroom}', [ClassroomController::class, 'destroy']);
-        Route::get('/classroom-overview', [ClassroomController::class, 'overview']);
 
     });
 

@@ -14,24 +14,32 @@ class StudentSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        for ($i = 1; $i <= 10; $i++) {
-            $name = $faker->name();
-            $email = "student$i@example.com";
+        $classroomIds = range(1, 10); // semua kelas
+        $studentNumber = 1;
 
-            $user = User::create([
-                'name' => $name,
-                'email' => $email,
-                'password' => Hash::make('password'),
-                'role' => 'student',
-            ]);
+        foreach ($classroomIds as $classroomId) {
+            // misal 5 murid per kelas
+            for ($j = 1; $j <= 5; $j++) {
+                $name = $faker->name();
+                $email = "student{$studentNumber}@example.com";
 
-            Student::create([
-                'name' => $name,
-                'nisn' => 'STD' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'email' => $email,
-                'classroom_id' => rand(1, 3),
-                'user_id' => $user->id,
-            ]);
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => Hash::make('password'),
+                    'role' => 'student',
+                ]);
+
+                Student::create([
+                    'name' => $name,
+                    'nisn' => 'STD' . str_pad($studentNumber, 4, '0', STR_PAD_LEFT),
+                    'email' => $email,
+                    'classroom_id' => $classroomId,
+                    'user_id' => $user->id,
+                ]);
+                $studentNumber++;
+            }
         }
     }
+
 }

@@ -12,7 +12,7 @@ const ListStudentTeacherClass = () => {
     const token = localStorage.getItem("token");
 
     axios
-      .get("http://localhost:8000/api/management/classroom-overview", {
+      .get("http://localhost:8000/api/management/classrooms/overview", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -41,6 +41,7 @@ const ListStudentTeacherClass = () => {
 
           {loadingOverview && <p>Loading data...</p>}
           {errorOverview && <p className="text-red-600">{errorOverview}</p>}
+
           {!loadingOverview && !errorOverview && (
             <div className="bg-base-100 rounded-xl p-4 shadow-xl overflow-x-auto">
               <table className="table table-zebra w-full text-base-content">
@@ -66,13 +67,25 @@ const ListStudentTeacherClass = () => {
                     </tr>
                   ) : (
                     overview.map((item, i) => (
-                      <tr key={item.id}>
+                      <tr key={item.class_id}>
                         <td>{i + 1}</td>
-                        <td>{item.name}</td>
-                        <td>{item.teacher_name || "-"}</td>
-                        <td>{item.subject || "-"}</td>
-                        <td>{item.total_students}</td>
-                        <td>{item.student_names?.join(", ") || "-"}</td>
+                        <td>{item.class_name}</td>
+                        <td>
+                          {item.teachers.length > 0
+                            ? item.teachers.map((t) => t.name).join(", ")
+                            : "-"}
+                        </td>
+                        <td>
+                          {item.teachers.length > 0
+                            ? item.teachers.map((t) => t.subject).join(", ")
+                            : "-"}
+                        </td>
+                        <td>{item.students.length}</td>
+                        <td>
+                          {item.students.length > 0
+                            ? item.students.map((s) => s.name).join(", ")
+                            : "-"}
+                        </td>
                       </tr>
                     ))
                   )}

@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 const ListTeacherClass = () => {
-  const [teachers, setTeachers] = useState([]);
+  const [classrooms, setClassrooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,12 +14,12 @@ const ListTeacherClass = () => {
         setLoading(true);
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:8000/api/management/teachers",
+          "http://localhost:8000/api/management/classrooms/teachers",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setTeachers(res.data);
+        setClassrooms(res.data);
       } catch (err) {
         setError("Gagal memuat data guru.");
         console.error(err);
@@ -52,41 +52,44 @@ const ListTeacherClass = () => {
 
           {!loading && !error && (
             <div className="bg-base-100 rounded-xl p-4 shadow-xl overflow-x-auto">
-              <table className="table table-zebra w-full text-base-content">
-                <thead className="bg-base-300">
-                  <tr>
-                    <th>#</th>
-                    <th>Nama Guru</th>
-                    <th>NIP</th>
-                    <th>Email</th>
-                    <th>Mapel</th>
-                    <th>Kelas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teachers.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={7}
-                        className="text-center text-gray-400 py-6"
-                      >
-                        Tidak ada data guru.
-                      </td>
-                    </tr>
-                  ) : (
-                    teachers.map((teacher, index) => (
-                      <tr key={teacher.id}>
-                        <td>{index + 1}</td>
-                        <td>{teacher.name}</td>
-                        <td>{teacher.nip}</td>
-                        <td>{teacher.email}</td>
-                        <td>{teacher.subject}</td>
-                        <td>{teacher.classroom?.name || "-"}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+              {classrooms.length === 0 ? (
+                <p className="text-center text-gray-400 py-6">
+                  Tidak ada data kelas dan guru.
+                </p>
+              ) : (
+                classrooms.map((classroom) => (
+                  <div key={classroom.class_id} className="mb-8">
+                    <h2 className="text-xl font-semibold mb-3 border-b pb-1">
+                      {classroom.class_name}
+                    </h2>
+
+                    {classroom.teachers.length === 0 ? (
+                      <p className="italic text-gray-500">
+                        Belum ada guru di kelas ini.
+                      </p>
+                    ) : (
+                      <table className="table table-zebra w-full text-base-content">
+                        <thead className="bg-base-300">
+                          <tr>
+                            <th>#</th>
+                            <th>Nama Guru</th>
+                            <th>Mapel</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {classroom.teachers.map((teacher, idx) => (
+                            <tr key={teacher.id}>
+                              <td>{idx + 1}</td>
+                              <td>{teacher.name}</td>
+                              <td>{teacher.subject}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
           )}
         </main>
